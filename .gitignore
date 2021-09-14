@@ -1,15 +1,38 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 015d426... initial commit
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+<<<<<<< HEAD
 
 # Test binary, built with `go test -c`
+=======
+bin
+testbin/*
+
+# Test binary, build with `go test -c`
+>>>>>>> 015d426... initial commit
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+<<<<<<< HEAD
 # Dependency directories (remove the comment below to include it)
 # vendor/
+=======
+# Kubernetes Generated files - skip generated files, except for vendored files
+
+!vendor/**/zz_generated.*
+
+# editor and IDE paraphernalia
+.idea
+*.swp
+*.swo
+*~
+>>>>>>> 015d426... initial commit
