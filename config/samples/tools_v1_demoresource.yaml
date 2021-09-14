@@ -3,5 +3,4 @@ kind: DemoResource
 metadata:
   name: demoresource-sample
 spec:
-  # Add fields here
-  foo: bar
+  message: "Hello, World!"

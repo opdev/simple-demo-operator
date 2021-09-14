@@ -23,7 +23,7 @@ import (
 // DemoResourceSpec defines the desired state of DemoResource
 type DemoResourceSpec struct {
 	// Message is a random string.
-	Message string `json:"foo,omitempty"`
+	Message string `json:"message"`
 }
 
 // DemoResourceStatus defines the observed state of DemoResource
@@ -36,6 +36,7 @@ type DemoResourceStatus struct {
 //+kubebuilder:subresource:status
 
 // DemoResource is the Schema for the demoresources API
+// +kubebuilder:printcolumn:name="Message",type=string,JSONPath=`.status.specMessage`
 type DemoResource struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
