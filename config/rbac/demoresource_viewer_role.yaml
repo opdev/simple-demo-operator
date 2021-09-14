@@ -1,0 +1,20 @@
+# permissions for end users to view demoresources.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: demoresource-viewer-role
+rules:
+- apiGroups:
+  - tools.opdev.io
+  resources:
+  - demoresources
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - tools.opdev.io
+  resources:
+  - demoresources/status
+  verbs:
+  - get
