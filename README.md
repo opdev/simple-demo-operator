@@ -21,17 +21,17 @@ make bundle-build
 make bundle push
 
 # Build and push the catalog (from the old catalog) with the new bundle
-CATALOG_BASE_IMG=quay.io/opdev/simple-demo-operator-catalog:<PREVIOUS_RELEASE_VERSION_TAG> make catalog-build
+CATALOG_BASE_IMG=quay.io/opdev/simple-demo-operator-catalog:v<PREVIOUS_VERSION_TAG> make catalog-build
 make catalog-push
 
 # Tag latest from the new latest tag
-docker tag quay.io/opdev/simple-demo-operator:<NEW_VERSION> latest
+docker tag quay.io/opdev/simple-demo-operator:<NEW_VERSION> quay.io/opdev/simple-demo-operator:latest
 docker push quay.io/opdev/simple-demo-operator:latest
 
-docker tag quay.io/opdev/simple-demo-operator-bundle:v<NEW_VERSION> latest
+docker tag quay.io/opdev/simple-demo-operator-bundle:v<NEW_VERSION> quay.io/opdev/simple-demo-operator-bundle:latest
 docker push quay.io/opdev/simple-demo-operator-bundle:latest
 
-docker tag quay.io/opdev/simple-demo-operator-catalog:v<NEW_VERSION> latest
+docker tag quay.io/opdev/simple-demo-operator-catalog:v<NEW_VERSION> quay.io/opdev/simple-demo-operator-catalog:latest
 docker push quay.io/opdev/simple-demo-operator-catalog:latest
 ```
 
