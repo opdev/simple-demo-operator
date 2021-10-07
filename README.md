@@ -34,3 +34,7 @@ docker push quay.io/opdev/simple-demo-operator-bundle:latest
 docker tag quay.io/opdev/simple-demo-operator-catalog:v<NEW_VERSION> latest
 docker push quay.io/opdev/simple-demo-operator-catalog:latest
 ```
+
+Update github.com/opdev/simple-demo-pipeline to include the new bundle. Remember
+to adjust the bundle.Dockerfile so that relative paths are indeed still relative
+when moving the bundle over.
