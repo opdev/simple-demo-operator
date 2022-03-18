@@ -141,6 +141,10 @@ ENVTEST = $(shell pwd)/bin/setup-envtest
 envtest: ## Download envtest-setup locally if necessary.
 	$(call go-get-tool,$(ENVTEST),sigs.k8s.io/controller-runtime/tools/setup-envtest@latest)
 
+DIGESTPINTOOL = $(shell pwd)/bin/pin-deploy-imgs-in-csv
+digestpintool: ## Download envtest-setup locally if necessary.
+	$(call go-get-tool,$(DIGESTPINTOOL),github.com/opdev/pin-deploy-imgs-in-csv@0.0.1)
+
 # go-get-tool will 'go get' any package $2 and install it to $1.
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 define go-get-tool
@@ -156,10 +160,11 @@ rm -rf $$TMP_DIR ;\
 endef
 
 .PHONY: bundle
-bundle: manifests kustomize ## Generate bundle manifests and metadata, then validate generated files.
+bundle: manifests kustomize digestpintool ## Generate bundle manifests and metadata, then validate generated files.
 	operator-sdk generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
+	$(DIGESTPINTOOL) ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
 	operator-sdk bundle validate ./bundle
 
 .PHONY: bundle-build
