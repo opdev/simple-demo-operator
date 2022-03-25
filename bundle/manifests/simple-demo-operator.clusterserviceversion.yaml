@@ -16,10 +16,10 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.11.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.18.0+git
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
   creationTimestamp: null
-  name: simple-demo-operator.v0.0.4
+  name: simple-demo-operator.v0.0.5
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -114,7 +114,7 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: quay.io/opdev/simple-demo-operator@sha256:2ad09eb0eac6932fe9995067c4e6789e8672594df98c434defab9b2fb29992d9 # 0.0.4
+                image: quay.io/opdev/simple-demo-operator@sha256:0d15576b9e2b7cf0415df11bcd81a860b9d0f58ecc1f6fb3ab82582d039110de # 0.0.5
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -198,4 +198,4 @@ spec:
   provider:
     name: The Partner Lifecycle Engineering Team
     url: github.com/opdev
-  version: 0.0.4
+  version: 0.0.5
