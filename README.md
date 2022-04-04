@@ -11,14 +11,16 @@ published to Quay.io.
 Change `VERSION` value in Makefile
 
 ```bash
-# Build and push the operator image with the new version
-make docker-build
-make docker-push
+# NOTE: tasks marked with (gha) are effectively done by GitHub Actions.
+
+# Build and push the operator image with the new version 
+make docker-build #(gha)
+make docker-push #(gha)
 
 # Build and push the bundle image with the new version
-make bundle
-make bundle-build
-make bundle-push
+make bundle 
+make bundle-build #(gha)
+make bundle-push #(gha)
 
 # Build and push the catalog (from the old catalog) with the new bundle
 CATALOG_BASE_IMG=quay.io/opdev/simple-demo-operator-catalog:v<PREVIOUS_VERSION_TAG> make catalog-build

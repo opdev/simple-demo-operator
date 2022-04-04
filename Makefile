@@ -159,12 +159,17 @@ rm -rf $$TMP_DIR ;\
 }
 endef
 
+.PHONY: pin-ctrlr-digest
+pin-controller-digest: digestpintool
+	$(DIGESTPINTOOL) ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
+
+
 .PHONY: bundle
 bundle: manifests kustomize digestpintool ## Generate bundle manifests and metadata, then validate generated files.
 	operator-sdk generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
-	$(DIGESTPINTOOL) ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
+	$(MAKE) pin-controller-digest
 	operator-sdk bundle validate ./bundle
 
 .PHONY: bundle-build
