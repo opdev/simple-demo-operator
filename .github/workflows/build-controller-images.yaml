@@ -1,4 +1,4 @@
-name: 'Build and publish controller images for multiple architectures'
+name: 'Build and Publish Controller'
 
 # Controller images are built on every merge to main, and are tagged with
 # the commit hash of the source at the time of execution.
@@ -7,6 +7,14 @@ on:
   push:
     branches:
       - "main"
+      - "ghactions"
+    paths-ignore:
+      - "hack/**"
+      - "**.md"
+      - "PROJECT"
+      - "OWNER" 
+      - ".gitignore"
+      - ".dockerignore"
 
 env:
   CONTROLLER_IMAGE_NAME: simple-demo-operator
