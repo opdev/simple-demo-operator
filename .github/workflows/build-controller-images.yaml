@@ -1,0 +1,48 @@
+name: 'Build and publish controller images for multiple architectures'
+
+# Controller images are built on every merge to main, and are tagged with
+# the commit hash of the source at the time of execution.
+
+on:
+  push:
+    branches:
+      - "main"
+
+env:
+  CONTROLLER_IMAGE_NAME: simple-demo-operator
+  TARGET_ARCHS: amd64,ppc64le
+jobs:
+  build-controller-images:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up QEMU static binaries for multiple architectures.
+      uses: docker/setup-qemu-action@master
+      with:
+        platforms: ${{ env.TARGET_ARCHS }}
+
+    - name: Build controller images for multiple architectures
+      id: build-controller-images
+      uses: redhat-actions/buildah-build@v2 
+      with:
+        archs: ${{ env.TARGET_ARCHS }}
+        image: ${{ env.CONTROLLER_IMAGE_NAME }}
+        tags: ${{ github.sha }}
+        containerfiles: |
+          ./Dockerfile
+
+    - name: Ensure manifest was built for controller images
+      run: |
+        buildah manifest inspect localhost/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }}
+
+    - name: Push to target push registry.
+      id: push-controller-img-to-registry
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ env.CONTROLLER_IMAGE_NAME }}
+        tags: ${{ github.sha }}
+        registry: quay.io/${{ secrets.IMAGE_REPOSITORY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
