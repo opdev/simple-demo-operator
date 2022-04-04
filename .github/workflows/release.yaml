@@ -3,10 +3,10 @@ name: 'Build and Publish Bundle'
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-alpha[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-alpha[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
 
 env:
   CONTROLLER_IMAGE_NAME: simple-demo-operator
@@ -17,34 +17,44 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      
+    - name: Prepare golang
+      uses: actions/setup-go@v3
+      with:
+        go-version: '>=1.17.0'
 
     - name: Set Env Tags
-      run: echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
+      run: |
+        echo VPREFIXED_RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
+        echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3 | sed -e 's/^v//g') >> $GITHUB_ENV
 
     - name: Log in to Quay.io
       uses: redhat-actions/podman-login@v1
       with:
-        username: ${{ env.REGISTRY_USERNAME }}
-        password: ${{ env.REGISTRY_PASSWORD }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
         registry: quay.io
 
     # The controller should already exists at a tag matching the commit hash.
     # Apply the release tag to this controller.
     - name: Apply a release tag to existing controller image.
       run: |
-        skopeo login quay.io -u ${{ secrets.REGISTRY_USERNAME }}
-        skopeo copy quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+        skopeo copy --all docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
 
     - name: Pin controller images before bundling
+      # TODO: Leverage the existing Make target for this action. This does not
+      # do so today to work around an issue where the installed binary (from Make)
+      # would go somewhere completely unexpected.
       run: |
-        make pin-controller-digest
+        go install github.com/opdev/pin-deploy-imgs-in-csv@0.0.1
+        pin-deploy-imgs-in-csv ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
 
     - name: Build bundle image
       id: build-bundle-images
       uses: redhat-actions/buildah-build@v2 
       with:
         image: ${{ env.BUNDLE_IMAGE_NAME }}
-        tags: v${{ env.RELEASE_TAG }} # Note: "v" prefixed!
+        tags: ${{ env.VPREFIXED_RELEASE_TAG }} # Note: "vX.Y.Z" prefixed
         containerfiles: |
           ./bundle.Dockerfile
 
@@ -53,7 +63,7 @@ jobs:
       uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ env.BUNDLE_IMAGE_NAME }}
-        tags: v${{ env.RELEASE_TAG }} # Note: "v" prefixed!
+        tags: ${{ env.VPREFIXED_RELEASE_TAG }} # Note: "vX.Y.Z" prefixed!
         registry: quay.io/${{ secrets.IMAGE_REPOSITORY }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
