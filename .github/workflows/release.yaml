@@ -49,6 +49,16 @@ jobs:
         go install github.com/opdev/pin-deploy-imgs-in-csv@0.0.1
         pin-deploy-imgs-in-csv ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
 
+    - name: Add deployment images to the ClusterServiceVersion.spec.relatedImages
+      run: |
+        go install github.com/opdev/add-deploy-imgs-to-related-imgs@0.0.1
+        add-deploy-imgs-to-related-imgs ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
+
+    - name: Ensure bundle validates after CI modifications
+      run: |
+        go install github.com/operator-framework/operator-sdk@1.18.0
+        operator-sdk bundle validate ./bundle
+
     - name: Build bundle image
       id: build-bundle-images
       uses: redhat-actions/buildah-build@v2 
