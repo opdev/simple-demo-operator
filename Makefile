@@ -220,3 +220,11 @@ catalog-build: opm ## Build a catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+.PHONY: catalog-build-fbc
+catalog-build-fbc: opm # TODO: Also need to update the entries before calling validate or this will fail.
+	$(OPM) render --output yaml $(BUNDLE_IMG) > catalog/simple-demo-operator/simple-demo-operator.v$(VERSION).yaml
+
+.PHONY: validate-catalog
+validate-catalog: opm
+	$(OPM) validate catalog
