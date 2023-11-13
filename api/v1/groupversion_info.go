@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 // Package v1 contains API Schema definitions for the tools v1 API group
-//+kubebuilder:object:generate=true
-//+groupName=tools.opdev.io
+// +kubebuilder:object:generate=true
+// +groupName=tools.opdev.io
 package v1
 
 import (

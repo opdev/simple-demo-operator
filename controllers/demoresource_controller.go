@@ -58,7 +58,7 @@ func (r *DemoResourceReconciler) Reconcile(ctx context.Context, req ctrl.Request
 
 	rsrc.Status.SpecMessage = rsrc.Spec.Message
 	l.Info("Let's update the status with the message from the spec!")
-	if err := r.Status().Update(ctx, &rsrc, &client.UpdateOptions{}); err != nil {
+	if err := r.Status().Update(ctx, &rsrc); err != nil {
 		l.Info("Uh oh! I ran into something unexpected.")
 		return ctrl.Result{}, err
 	}
