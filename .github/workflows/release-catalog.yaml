@@ -21,6 +21,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     
+    - name: Log in to Quay.io
+      uses: redhat-actions/podman-login@v1
+      with:
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        registry: quay.io
+
     - name: Make the catalog
       run: |
         CATALOG_BASE_IMG=quay.io/opdev/${{ env.CATALOG_IMAGE_NAME }}:v${{ inputs.FROM_TAG }} make catalog-build

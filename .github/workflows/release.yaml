@@ -28,6 +28,19 @@ jobs:
         echo VPREFIXED_RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
         echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3 | sed -e 's/^v//g') >> $GITHUB_ENV
 
+    - name: Log in to Quay.io
+      uses: redhat-actions/podman-login@v1
+      with:
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        registry: quay.io
+
+    # The controller should already exists at a tag matching the commit hash.
+    # Apply the release tag to this controller.
+    - name: Apply a release tag to existing controller image.
+      run: |
+        skopeo copy --all docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+
   pin-images-and-bundle:
     needs: [tag-controller-for-release]
     runs-on: ubuntu-latest
@@ -44,12 +57,6 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
         registry: quay.io
-
-    # The controller should already exists at a tag matching the commit hash.
-    # Apply the release tag to this controller.
-    - name: Apply a release tag to existing controller image.
-      run: |
-        skopeo copy --all docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
 
     - name: Regenerate bundle with pinned images
       run: USE_IMAGE_DIGESTS=true make bundle
