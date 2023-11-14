@@ -50,7 +50,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
+    - uses: actions/setup-go@v4
+      with:
+        go-version-file: 'go.mod'
     - name: Log in to Quay.io
       uses: redhat-actions/podman-login@v1
       with:
@@ -58,12 +60,13 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
         registry: quay.io
 
+    - name: Install OperatorSDK
+      run: go install github.com/operator-framework/operator-sdk@${{ env.OPERATOR_SDK_VERSION }}      
     - name: Regenerate bundle with pinned images
       run: USE_IMAGE_DIGESTS=true make bundle
 
     - name: Ensure bundle validates after CI modifications
       run: |
-        go install github.com/operator-framework/operator-sdk@${{ env.OPERATOR_SDK_VERSION }}
         operator-sdk bundle validate ./bundle
 
     - name: Build bundle image
