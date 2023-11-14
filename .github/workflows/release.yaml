@@ -11,22 +11,32 @@ on:
 env:
   CONTROLLER_IMAGE_NAME: simple-demo-operator
   BUNDLE_IMAGE_NAME: simple-demo-operator-bundle
+  OPERATOR_SDK_VERSION: 1.32.0'
 jobs:
-  release-assets:
+  tag-controller-for-release:
     runs-on: ubuntu-latest
+    outputs:
+      vprefixed-release-tag: ${{ steps.set-env-tags.outputs.VPREFIXED_RELEASE_TAG }}
+      release-tag: ${{ steps.set-env-tags.outputs.RELEASE_TAG }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      
-    - name: Prepare golang
-      uses: actions/setup-go@v3
-      with:
-        go-version: '>=1.17.0'
 
     - name: Set Env Tags
+      id: set-env-tags
       run: |
         echo VPREFIXED_RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
         echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3 | sed -e 's/^v//g') >> $GITHUB_ENV
+
+  pin-images-and-bundle:
+    needs: [tag-controller-for-release]
+    runs-on: ubuntu-latest
+    env:
+      VPREFIXED_RELEASE_TAG: ${{ needs.tag-controller-for-release.outputs.vprefixed-release-tag }}
+      RELEASE_TAG: ${{ needs.tag-controller-for-release.outputs.release-tag }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Log in to Quay.io
       uses: redhat-actions/podman-login@v1
@@ -41,22 +51,12 @@ jobs:
       run: |
         skopeo copy --all docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
 
-    - name: Pin controller images before bundling
-      # TODO: Leverage the existing Make target for this action. This does not
-      # do so today to work around an issue where the installed binary (from Make)
-      # would go somewhere completely unexpected.
-      run: |
-        go install github.com/opdev/pin-deploy-imgs-in-csv@0.0.1
-        pin-deploy-imgs-in-csv ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
-
-    - name: Add deployment images to the ClusterServiceVersion.spec.relatedImages
-      run: |
-        go install github.com/opdev/add-deploy-imgs-to-related-imgs@0.0.1
-        add-deploy-imgs-to-related-imgs ./bundle/manifests/simple-demo-operator.clusterserviceversion.yaml
+    - name: Regenerate bundle with pinned images
+      run: USE_IMAGE_DIGESTS=true make bundle
 
     - name: Ensure bundle validates after CI modifications
       run: |
-        go install github.com/operator-framework/operator-sdk@1.18.0
+        go install github.com/operator-framework/operator-sdk@${{ env.OPERATOR_SDK_VERSION }}
         operator-sdk bundle validate ./bundle
 
     - name: Build bundle image
