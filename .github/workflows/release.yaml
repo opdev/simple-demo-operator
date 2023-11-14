@@ -61,7 +61,12 @@ jobs:
         registry: quay.io
 
     - name: Install OperatorSDK
-      run: go install github.com/operator-framework/operator-sdk@${{ env.OPERATOR_SDK_VERSION }}      
+      run: | 
+        wget -O /usr/local/bin/operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/${{ env.OPERATOR_SDK_VERSION }}/operator-sdk_linux_amd64
+        chmod +x /usr/local/bin/operator-sdk
+        operator-sdk --version
+        /usr/local/bin/operator-sdk --version
+
     - name: Regenerate bundle with pinned images
       run: USE_IMAGE_DIGESTS=true make bundle
 
