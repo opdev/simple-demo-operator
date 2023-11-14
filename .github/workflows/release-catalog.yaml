@@ -1,0 +1,36 @@
+name: Release Catalog
+
+on:
+  workflow_dispatch:
+    inputs:
+      TO_TAG:
+        required: true 
+        type: string
+        description: The new tag to include in the catalog. Do not use a v prefix.
+      FROM_TAG:
+        required: true 
+        type: string
+        description: The previous release tag. Used as a base to build the new catalog. Do not use a v prefix.
+
+env:
+  CATALOG_IMAGE_NAME: simple-demo-operator-catalog
+jobs:
+  create-and-push-catalog:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Make the catalog
+      run: |
+        CATALOG_BASE_IMG=quay.io/opdev/${{ env.CATALOG_IMAGE_NAME }}:v${{ inputs.FROM_TAG }} make catalog-build
+
+    - name: Push to target registry.
+      id: push-catalog-img-to-registry
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ env.CATALOG_IMAGE_NAME }}
+        tags: v${{ inputs.TO_TAG }}
+        registry: quay.io/${{ secrets.IMAGE_REPOSITORY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
