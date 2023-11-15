@@ -25,8 +25,8 @@ jobs:
     - name: Set Env Tags
       id: set-env-tags
       run: |
-        echo VPREFIXED_RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
-        echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3 | sed -e 's/^v//g') >> $GITHUB_ENV
+        echo VPREFIXED_RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) | tee -a $GITHUB_OUTPUT
+        echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3 | sed -e 's/^v//g') | tee -a $GITHUB_OUTPUT
 
     - name: Log in to Quay.io
       uses: redhat-actions/podman-login@v1
@@ -39,7 +39,7 @@ jobs:
     # Apply the release tag to this controller.
     - name: Apply a release tag to existing controller image.
       run: |
-        skopeo copy --all docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+        skopeo copy --all docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ github.sha }} docker://quay.io/${{ secrets.IMAGE_REPOSITORY }}/${{ env.CONTROLLER_IMAGE_NAME }}:${{ steps.set-env-tags.outputs.RELEASE_TAG }}
 
   pin-images-and-bundle:
     needs: [tag-controller-for-release]
