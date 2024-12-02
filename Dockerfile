@@ -21,6 +21,17 @@ FROM registry.access.redhat.com/ubi9/ubi-micro
 WORKDIR /
 COPY --from=builder /workspace/manager .
 COPY  LICENSE /licenses/LICENSE
+
+LABEL \
+    name="simple-demo-operator" \
+    License="Apache-2.0" \
+    summary="This is the controller for the simple-demo-operator" \
+    maintainer="opdev" \
+    vendor="Partner Engineering" \
+    release="1" \
+    version="0.0.7" \
+    description="A simple Kubernetes operator to be used for testing purposes"
+
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
