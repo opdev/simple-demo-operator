@@ -32,8 +32,8 @@ type DemoResourceStatus struct {
 	SpecMessage string `json:"specMessage,omitempty"`
 }
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // DemoResource is the Schema for the demoresources API
 // +kubebuilder:printcolumn:name="Message",type=string,JSONPath=`.status.specMessage`
@@ -45,7 +45,7 @@ type DemoResource struct {
 	Status DemoResourceStatus `json:"status,omitempty"`
 }
 
-//+kubebuilder:object:root=true
+// +kubebuilder:object:root=true
 
 // DemoResourceList contains a list of DemoResource
 type DemoResourceList struct {
