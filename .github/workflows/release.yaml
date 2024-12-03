@@ -20,7 +20,7 @@ jobs:
       release-tag: ${{ steps.set-env-tags.outputs.RELEASE_TAG }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set Env Tags
       id: set-env-tags
@@ -49,8 +49,8 @@ jobs:
       RELEASE_TAG: ${{ needs.tag-controller-for-release.outputs.release-tag }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-    - uses: actions/setup-go@v4
+      uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
       with:
         go-version-file: 'go.mod'
     - name: Log in to Quay.io
