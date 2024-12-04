@@ -29,7 +29,7 @@ LABEL \
     maintainer="opdev" \
     vendor="Partner Engineering" \
     release="1" \
-    version="0.0.7" \
+    version="0.0.8" \
     description="A simple Kubernetes operator to be used for testing purposes"
 
 USER 65532:65532
