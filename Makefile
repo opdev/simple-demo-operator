@@ -55,7 +55,7 @@ IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 IMGLATEST = $(IMAGE_TAG_BASE):latest
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.26.0
+ENVTEST_K8S_VERSION = 1.30.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -153,9 +153,9 @@ ENVTEST ?= $(LOCALBIN)/setup-envtest
 OPERATOR_SDK ?= $(LOCALBIN)/operator-sdk
 
 ## Tool Versions
-KUSTOMIZE_VERSION ?= v4.5.7
-CONTROLLER_TOOLS_VERSION ?= v0.11.1
-OPERATOR_SDK_VERSION ?= "v1.32.0"
+KUSTOMIZE_VERSION ?= v5.4.2
+CONTROLLER_TOOLS_VERSION ?= v0.15.0
+OPERATOR_SDK_VERSION ?= "v1.38.0"
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.

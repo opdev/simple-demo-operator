@@ -34,9 +34,9 @@ type DemoResourceReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=tools.opdev.io,resources=demoresources,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=tools.opdev.io,resources=demoresources/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=tools.opdev.io,resources=demoresources/finalizers,verbs=update
+// +kubebuilder:rbac:groups=tools.opdev.io,resources=demoresources,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=tools.opdev.io,resources=demoresources/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=tools.opdev.io,resources=demoresources/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
