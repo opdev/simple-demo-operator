@@ -1,0 +1,22 @@
+---
+image: quay.io/opdev/simple-demo-operator-bundle:v0.0.4
+name: simple-demo-operator.v0.0.4
+package: simple-demo-operator
+properties:
+- type: olm.gvk
+  value:
+    group: tools.opdev.io
+    kind: DemoResource
+    version: v1
+- type: olm.package
+  value:
+    packageName: simple-demo-operator
+    version: 0.0.4
+relatedImages:
+- image: gcr.io/kubebuilder/kube-rbac-proxy@sha256:db06cc4c084dd0253134f156dddaaf53ef1c3fb3cc809e5d81711baa4029ea4c
+  name: ""
+- image: quay.io/opdev/simple-demo-operator-bundle:v0.0.4
+  name: ""
+- image: quay.io/opdev/simple-demo-operator@sha256:2ad09eb0eac6932fe9995067c4e6789e8672594df98c434defab9b2fb29992d9
+  name: ""
+schema: olm.bundle
