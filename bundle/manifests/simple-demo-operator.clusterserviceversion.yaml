@@ -16,7 +16,7 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    createdAt: "2024-12-06T14:48:14Z"
+    createdAt: "2026-03-10T21:27:30Z"
     features.operators.openshift.io/disconnected: "false"
     features.operators.openshift.io/fips-compliant: "false"
     features.operators.openshift.io/proxy-aware: "false"
@@ -24,12 +24,12 @@ metadata:
     features.operators.openshift.io/token-auth-aws: "false"
     features.operators.openshift.io/token-auth-azure: "false"
     features.operators.openshift.io/token-auth-gcp: "false"
-    operators.operatorframework.io/builder: operator-sdk-v1.38.0
+    operators.operatorframework.io/builder: operator-sdk-v1.42.1
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v4
   labels:
     operatorframework.io/arch.amd64: supported
     operatorframework.io/arch.ppc64le: supported
-  name: simple-demo-operator.v0.0.8
+  name: simple-demo-operator.v0.0.9
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -115,7 +115,7 @@ spec:
                 - --health-probe-bind-address=:8081
                 command:
                 - /manager
-                image: quay.io/opdev/simple-demo-operator:0.0.8
+                image: quay.io/opdev/simple-demo-operator:0.0.9
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -202,4 +202,4 @@ spec:
   provider:
     name: The Partner Lifecycle Engineering Team
     url: github.com/opdev
-  version: 0.0.8
+  version: 0.0.9

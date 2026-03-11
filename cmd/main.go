@@ -36,7 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	toolsv1 "github.com/opdev/simple-demo-operator/api/v1"
-	"github.com/opdev/simple-demo-operator/controllers"
+	"github.com/opdev/simple-demo-operator/internal/controller"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -144,7 +144,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.DemoResourceReconciler{
+	if err = (&controller.DemoResourceReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {

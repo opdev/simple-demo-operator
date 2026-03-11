@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM golang:1.22 AS builder
+FROM golang:1.26 AS builder
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -10,12 +10,12 @@ COPY go.sum go.sum
 RUN go mod download
 
 # Copy the go source
-COPY main.go main.go
+COPY cmd/ cmd/
 COPY api/ api/
-COPY controllers/ controllers/
+COPY internal/controller/ internal/controller/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager cmd/main.go
 
 FROM registry.access.redhat.com/ubi9/ubi-micro
 WORKDIR /
@@ -29,7 +29,7 @@ LABEL \
     maintainer="opdev" \
     vendor="Partner Engineering" \
     release="1" \
-    version="0.0.8" \
+    version="0.0.9" \
     description="A simple Kubernetes operator to be used for testing purposes"
 
 USER 65532:65532
