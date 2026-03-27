@@ -1,0 +1,14 @@
+---
+entries:
+- name: simple-demo-operator.v0.0.2
+- name: simple-demo-operator.v0.0.3
+  replaces: simple-demo-operator.v0.0.2
+- name: simple-demo-operator.v0.0.4
+  replaces: simple-demo-operator.v0.0.3
+- name: simple-demo-operator.v0.0.5
+  replaces: simple-demo-operator.v0.0.4
+- name: simple-demo-operator.v0.0.6
+  replaces: simple-demo-operator.v0.0.5
+name: stable
+package: simple-demo-operator
+schema: olm.channel
